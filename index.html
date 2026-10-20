@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Share files easily. Upload once and share a download link with anyone.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>mShare — Simple file sharing</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="ShareBox home">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 17 17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>mShare</span>
+    </a>
+    <div class="header-actions">
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 15.3A8.5 8.5 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">FILE SHARING, MADE SIMPLE</div>
+      <h1>Share files.<br><span>No account needed.</span></h1>
+      <p class="subtitle">Upload files, get a shareable link, and send it to anyone.</p>
+    </section>
+
+    <section class="upload-card" aria-label="File upload">
+      <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a file or drop it here">
+        <div class="upload-symbol" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15.5v3A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2>Drop your file here</h2>
+        <p>or click to browse your device</p>
+        <button id="chooseBtn" class="button button-dark" type="button">Choose a file</button>
+        <input id="fileInput" type="file" multiple hidden>
+        <div class="limit-note">Max limit: 100 MB per file</div>
+      </div>
+
+      <div id="selectedFile" class="selected-file hidden">
+        <div class="file-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6.75 3.75h7l4.5 4.5v12H6.75a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.5 4v4.5H18M8.5 13h7m-7 3.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <div class="file-details">
+          <div id="fileName" class="file-name"></div>
+          <div id="fileSize" class="muted"></div>
+        </div>
+        <button id="removeBtn" class="icon-button" type="button" aria-label="Remove selected file">
+          <svg viewBox="0 0 24 24" fill="none"><path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div id="progressWrap" class="progress-wrap hidden">
+        <div class="progress-label"><span id="progressText">Uploading…</span><span id="progressPercent">0%</span></div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      </div>
+
+      <button id="uploadBtn" class="button button-primary full-width" type="button" disabled>
+        <span>Upload file</span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.75 12h14.5m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <p id="status" class="status" role="status"></p>
+
+      <div id="result" class="result hidden">
+        <div class="success-heading">
+          <span class="success-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m5.5 12.5 4.2 4.2L18.5 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><strong>Your file is ready to share</strong><p>Anyone with this link can download it.</p></div>
+        </div>
+        <label for="shareLink">Share link</label>
+        <div class="link-row"><input id="shareLink" type="text" readonly><button id="copyBtn" class="button button-dark" type="button">Copy link</button></div>
+        <a id="openLink" class="download-link" target="_blank" rel="noopener">Open download link <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5m-.5-4.5L10 14M18 13v5.5a.5.5 0 0 1-.5.5h-12a.5.5 0 0 1-.5-.5v-12a.5.5 0 0 1 .5-.5H11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <button id="anotherBtn" class="button button-plain full-width" type="button">Upload another file</button>
+      </div>
+    </section>
+
+    <section class="features">
+      <div><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8 16 16 8M8.5 8H16v7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>Easy sharing</strong><p>One link is all recipients need.</p></div>
+      <div><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 10V7.5a5 5 0 0 1 10 0V10m-11 0h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 18 20H6a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 6 10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 13v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><strong>No account</strong><p>No registration or login screens.</p></div>
+      <div><span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3.75 8.25h16.5v10.5H3.75zM3.75 8.25l2-3h12.5l2 3M8 12h8" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg></span><strong>Cloud storage</strong><p>Your files live in Cloudflare R2</p></div>
+     <div>
+  <span class="feature-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8.25" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M12 7.5v4.8l3.2 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <strong>30-day expiry</strong>
+  <p>Automatically deleted after 30 days.</p>
+</div>
+    </section>
+    <p class="privacy-note">Only upload files you have permission to share. Public links are accessible to anyone who has them.</p>
+  </main>
+  <footer>mShare <span class="footer-separator">·</span> Powered by Cloudflare R2</footer>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const toggle = document.getElementById("themeToggle");
+      let saved = null;
+      try { saved = localStorage.getItem("mshare-theme"); } catch (_) {}
+      const initial = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      function applyTheme(theme) {
+        root.dataset.theme = theme;
+        toggle.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+        toggle.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = theme === "dark" ? "#11131b" : "#f6f7fb";
+      }
+      applyTheme(initial);
+      toggle.addEventListener("click", () => {
+        const next = root.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(next);
+        try { localStorage.setItem("mshare-theme", next); } catch (_) {}
+      });
+    })();
+  </script>
+</body>
+</html>
